@@ -1,68 +1,107 @@
-<?php
-$servername = "localhost";
-$username = "your_username";
-$password = "your_password";
-$dbname = "Serafica_database";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="index.css">
+    <title>Setup</title>
+</head>
+<body>
 
-// Create connection
+
+    <h1>Database Setup</h1>
+
+<?php
+
+$servername = "localhost";
+$username = "root";
+$password = "";
+
 $conn = new mysqli($servername, $username, $password);
 
-// Check connection
+
 if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+    die("Connection failed: " . $conn->connect_error . "<br>");
 }
 
-// Create database
-$sql_create_db = "CREATE DATABASE IF NOT EXISTS $dbname";
-if ($conn->query($sql_create_db) === TRUE) {
-    echo "Database created successfully";
+
+$sql = "CREATE DATABASE IF NOT EXISTS studentrecord";
+if ($conn->query($sql) === TRUE) {
+    echo "Database created successfully<br>";
 } else {
-    echo "Error creating database: " . $conn->error;
+    echo "Error creating database: " . $conn->error . "<br>";
 }
 
-// Use the selected database
-mysqli_select_db($conn, $dbname);
 
-// Create Student table
-$sql_student = "CREATE TABLE IF NOT EXISTS Student (
-    StudentID INT AUTO_INCREMENT PRIMARY KEY,
-    FirstName VARCHAR(50) NOT NULL,
-    LastName VARCHAR(50) NOT NULL,
-    DateOfBirth DATE,
-    Email VARCHAR(100) NOT NULL,
-    Phone VARCHAR(15)
-)";
-$conn->query($sql_student);
+$conn->select_db("studentrecord");
 
-// Create Course table
-$sql_course = "CREATE TABLE IF NOT EXISTS Course (
-    CourseID INT AUTO_INCREMENT PRIMARY KEY,
-    CourseName VARCHAR(100) NOT NULL,
-    Credits INT
-)";
-$conn->query($sql_course);
 
-// Create Instructor table
-$sql_instructor = "CREATE TABLE IF NOT EXISTS Instructor (
-    InstructorID INT AUTO_INCREMENT PRIMARY KEY,
-    FirstName VARCHAR(50) NOT NULL,
-    LastName VARCHAR(50) NOT NULL,
-    Email VARCHAR(100) NOT NULL,
-    Phone VARCHAR(15)
+$sql = "CREATE TABLE IF NOT EXISTS student (
+    StudentID MEDIUMINT NOT NULL AUTO_INCREMENT,
+    FirstName varchar(50) NOT NULL,
+    LastName varchar(50),
+    DateOfBirth date,
+    Email varchar(50),
+    Phone INT(20),
+    PRIMARY KEY(StudentID)
 )";
-$conn->query($sql_instructor);
+if ($conn->query($sql) === TRUE) {
+    echo "Table student created successfully<br>";
+} else {
+    echo "Error creating table: " . $conn->error . "<br>";
+}
 
-// Create Enrollment table
-$sql_enrollment = "CREATE TABLE IF NOT EXISTS Enrollment (
-    EnrollmentID INT AUTO_INCREMENT PRIMARY KEY,
-    StudentID INT,
-    CourseID INT,
-    EnrollmentDate DATE,
-    Grade VARCHAR(5),
-    FOREIGN KEY (StudentID) REFERENCES Student(StudentID),
-    FOREIGN KEY (CourseID) REFERENCES Course(CourseID)
+
+$sql = "CREATE TABLE IF NOT EXISTS course (
+    CourseID MEDIUMINT NOT NULL AUTO_INCREMENT,
+    CourseName varchar(100),
+    Credits INT(255),
+    PRIMARY KEY(CourseID)
 )";
-$conn->query($sql_enrollment);
+if ($conn->query($sql) === TRUE) {
+    echo "Table course created successfully<br>";
+} else {
+    echo "Error creating table: " . $conn->error . "<br>";
+}
+
+
+$sql = "CREATE TABLE IF NOT EXISTS instructor (
+    InstructorID MEDIUMINT NOT NULL AUTO_INCREMENT,
+    FirstName varchar(50),
+    LastName varchar(50),
+    Email varchar(50),
+    Phone INT(20),
+    PRIMARY KEY(InstructorID)
+)";
+if ($conn->query($sql) === TRUE) {
+    echo "Table instructor created successfully<br>";
+} else {
+    echo "Error creating table: " . $conn->error . "<br>";
+}
+
+
+$sql = "CREATE TABLE IF NOT EXISTS enrollment (
+    EnrollmentID MEDIUMINT NOT NULL AUTO_INCREMENT,
+    StudentID MEDIUMINT,
+    FOREIGN KEY (StudentID) REFERENCES student(StudentID),
+    CourseID MEDIUMINT,
+    FOREIGN KEY (CourseID) REFERENCES course(CourseID),
+    EnrollmentDate date,
+    Grade INT,
+    PRIMARY KEY(EnrollmentID)
+)";
+if ($conn->query($sql) === TRUE) {
+    echo "Table enrollment created successfully<br>";
+} else {
+    echo "Error creating table: " . $conn->error . "<br>";
+}
+
 
 $conn->close();
+
 ?>
+
+    
+</body>
+</html>
+
